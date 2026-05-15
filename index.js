@@ -71,6 +71,8 @@ app.get("/api/categories/:categoryId",async  (req, res) => {
 async function readByProduct(){
     try { 
         const product = await  Product.find()
+         .populate("category")
+         
        return product;
     } catch (error){
         throw error
