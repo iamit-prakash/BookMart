@@ -1,27 +1,55 @@
 import { Link } from "react-router-dom"
+import CartStatus from "../components/CartStatus"
+import WishlistStatus from "./WishlistStatus"
+import { useContext } from "react"
+import SearchContext from "../contexts/SearchContext"
 
 export default function Nav() {
+const {searchTerm, setSearchTerm} = useContext(SearchContext)
+//console.log(searchTerm)
 
   return (
-    <nav className="navbar navbar-expand-lg bg-light shadow-sm py-3">
+    <nav
+     className="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
+     style={{
+    backgroundColor: "#2d2d2d"
+  }}
+    >
 
       <div className="container-fluid">
 
         {/* Logo */}
         <Link
-          className="navbar-brand fs-1 fw-bold fst-italic"
+          className="navbar-brand fs-1 fw-bold fst-italic text-light"
           to="/"
         >
           📖 BookMart
         </Link>
+     <button
+      className="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent"
+      aria-controls="navbarContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+      >
+   <span className="navbar-toggler-icon"></span>
+   </button> 
+
+       <div 
+       className="collapse navbar-collapse justify-content-between"
+        id="navbarContent">
 
         {/* Navbar Links */}
-        <div className="d-flex align-items-center gap-5">
+        <div 
+        className="navbar-nav ms-auto d-flex flex-column flex-lg-row align-items-center gap-3 gap-lg-5"
+        >
 
           {/* Books */}
           <Link
             to="/books"
-            className="text-decoration-none text-dark text-center fw-bold"
+            className="nav-link text-light text-center fw-bold"
           >
             <div>Books</div>
             <div>📚</div>
@@ -30,7 +58,7 @@ export default function Nav() {
           {/* Wishlist */}
           <Link
             to="/wishlist"
-            className="text-decoration-none text-dark text-center fw-bold position-relative"
+            className="nav-link text-light text-center fw-bold position-relative"
           >
             <div>Wishlist</div>
             <div>❤️</div>
@@ -38,7 +66,7 @@ export default function Nav() {
             <span
               className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
             >
-              0
+              <WishlistStatus />
             </span>
 
           </Link>
@@ -46,7 +74,7 @@ export default function Nav() {
           {/* Cart */}
           <Link
             to="/cart"
-            className="text-decoration-none text-dark text-center fw-bold position-relative"
+            className="nav-link text-light text-center fw-bold position-relative"
           >
             <div>Cart</div>
             <div>🛒</div>
@@ -54,7 +82,7 @@ export default function Nav() {
             <span
               className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
             >
-              0
+              <CartStatus />
             </span>
 
           </Link>
@@ -62,7 +90,7 @@ export default function Nav() {
           {/* Profile */}
           <Link
             to="/profile"
-            className="text-decoration-none text-dark text-center fw-bold"
+            className="nav-link text-light text-center fw-bold"
           >
             <div>Profile</div>
             <div>👤</div>
@@ -71,22 +99,29 @@ export default function Nav() {
         </div>
 
         {/* Search Bar */}
-        <form className="d-flex align-items-center">
-
+        <form
+         className="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0"
+        >
           <span className="fs-5 me-2">🔍</span>
 
           <input
             type="search"
             placeholder="Search books..."
             className="form-control"
-            style={{ width: "320px" }}
+            style={{ 
+              width: "100%",
+              maxWidth: "320px"
+            }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
 
         </form>
+    </div>      
 
       </div>
 
     </nav>
-
+   
   )
 }

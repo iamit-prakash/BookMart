@@ -1,14 +1,40 @@
-import { useState } from "react"
+import { Link, useSearchParams } from "react-router-dom"
+import { useState, useEffect } from "react"
 import useFetch from "../useFetch"
+import FilterPanel from "./FilterPanel"
+import BookCard from "../components/BookCard"
+import CartContext from "../contexts/CartContext"
+import WishlistContext from "../contexts/WishlistContext"
+import { useContext } from "react"
+import {notifySuccess, notifyError} from "../components/ToastMessage"
+import SearchContext from "../contexts/SearchContext"
 
 export default function Books(){
   const[category, setCategory] = useState([])
- const {data, error, loading} = useFetch("https://book-mart-cyan.vercel.app/api/products") 
+  const[rating, setRating] = useState(0)
+  const[sortByPrice, setSortByPrice] = useState("default")
+  //console.log(sortByPrice)
+  const[searchParams] = useSearchParams()
+  
+ const {data, error, loading} = useFetch("https://book-mart-cyan.vercel.app/api/products", []) 
+
+ const {cart, setCart} = useContext(CartContext) 
+ const {wishlist, setWishlist} = useContext(WishlistContext)
+ const {searchTerm} = useContext(SearchContext)
+ //console.log(searchTerm)
  
- if (loading) return <p>Loading...</p>
-  if (error) return <p>Error...</p>
+ const selectedCategory = searchParams.get("category")
+  //console.log(selectedCategory)
+
+  useEffect(()=> {
+    if(selectedCategory){
+      setCategory([selectedCategory])
+    }
+  }, [selectedCategory])
 
 
+ if (loading) return <h3 className="text-center mt-5 text-light">Loading...</h3>
+  if (error) return <h2 className="text-center mt-5 text-danger">Error...</h2>
 
 const handleCategory = (event) => {
    //console.log(event.target.value, event.target.checked)
@@ -19,71 +45,111 @@ const handleCategory = (event) => {
    }
 }
 
-const filteredBooks = category.length > 0
+const categoryFilteredBooks = category.length > 0
 
 ? data.filter((book) => {
-
-    console.log(book.category)
-
+    //console.log(book.category)
     return category.includes(
       book.category.category
     )
-
 })
 
 : data
+
+// console.log("data:", data)
+// console.log("category:", category)
+// console.log("categoryFilteredBooks:", categoryFilteredBooks)
+
+const filteredBooks = categoryFilteredBooks.filter(
+  (book) => book.rating >= rating
+)
+
+const searchedBooks = filteredBooks.filter((book) =>
+  book.title.toLowerCase().includes(searchTerm.toLowerCase())
+)
+
+const sortedBooks = [...searchedBooks ];
+
+if(sortByPrice === "lowToHigh"){
+  sortedBooks.sort((a,b) => a.price - b.price)
+}
+
+if(sortByPrice === "highToLow"){
+  sortedBooks.sort((a,b) => b.price - a.price)
+}
+
+const handleClearFilters = () => {
+  setCategory([]),
+    setRating(0),
+    setSortByPrice("default")
+
+}
+
+const handleCart = (item) => {
+  const alreadyExists = cart.find((book)=> book._id === item._id)
+
+  if(!alreadyExists){
+    setCart([...cart, 
+      {
+        ...item,
+        quantity: 1
+      }
+    ])
+    
+    notifySuccess("Book added to cart")
+  } else {
+     notifyError(
+    "Book already added. Check cart."
+  )
+  }
+}
+
+const handleWishlist =(item) => {
+  const alreadyExists = wishlist.find((book) => book._id === item._id)
+
+  if(!alreadyExists){
+    setWishlist([...wishlist, 
+      {...item,
+        quantity: 1
+      }
+      ])
+
+    notifySuccess("Book added to wishlist")
+  }  else {
+    notifyError(
+    "Book already added. Check wishlist."
+  )
+  }
+}
+
     return(
     <div className="container">
   <div className="row">
 
-    {/* Filter Section */}
-<div className="col-md-3">
-
-  <div className="card p-3">
-
-    <h2>Filters</h2>
-    <br />
-    <h5>Category📙📘📗</h5>
-    <label htmlFor="Self Help"> 
-    <input onChange={handleCategory} type="checkbox" id="Self Help" value="Self Help" /> Self Help
-    </label>
-    <label htmlFor="Business"> 
-    <input onChange={handleCategory} type="checkbox" id="Business" value="Business" /> Business
-    </label>
-    <label htmlFor="Finance"> 
-    <input onChange={handleCategory} type="checkbox" id="Finance" value="Finance" /> Finance
-    </label>
-    <label htmlFor="Productivity"> 
-    <input onChange={handleCategory} type="checkbox" id="Productivity" value="Productivity" /> Productivity
-    </label>
-</div>
-</div>
-
-         <div className="col-md-9">
+  <FilterPanel
+    category={category}
+    handleCategory={handleCategory}
+    rating={rating}
+    setRating={setRating}
+    sortByPrice={sortByPrice}
+    setSortByPrice={setSortByPrice}
+    handleClearFilters={handleClearFilters}
+    
+   />
+         {/*Product data */}
+         <div className="col-md-9 mt-4">
+          <p className="mt-3">
+           Showing {sortedBooks.length} books
+         </p> 
        <div className="row row-cols-1 row-cols-md-3 g-4">
-          {filteredBooks?.map((book) => (
-            <div className="col" key={book._id}>
-               <div className="card h-100">
-                <img
-                  src={book.imageUrl}
-                  className="card-img-top"
-                  alt={book.title}
-                  style={{ height: "250px", objectFit: "contain" }}
-                />
-
-                <div className="card-body">
-                  <h5>📖{book.title}</h5>
-                  <p>Price ₹{book.price}</p>
-                  <p>Rating: {book.rating}</p>
-                  <div className="d-flex flex-column gap-2">
-                  <button className="btn btn-primary">Add to Cart🛒</button>
-
-                  <button className="btn btn-primary">Add to Wishlist</button>
-                  </div>
-                </div>
-              </div>
-              </div>
-          ))}
+       {sortedBooks.map((book) => (
+       <BookCard
+        key={book._id}
+        book={book}
+        handleCart={handleCart}
+       handleWishlist={handleWishlist}
+        />
+))}
           </div>
           </div>
 
