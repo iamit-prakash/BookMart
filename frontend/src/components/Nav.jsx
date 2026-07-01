@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import CartStatus from "../components/CartStatus"
 import WishlistStatus from "./WishlistStatus"
 import { useContext } from "react"
@@ -7,6 +7,13 @@ import SearchContext from "../contexts/SearchContext"
 export default function Nav() {
 const {searchTerm, setSearchTerm} = useContext(SearchContext)
 //console.log(searchTerm)
+const  location = useLocation()
+const isHomePage = location.pathname === "/";
+
+//console.log(location)
+//console.log(isHomePage);
+
+
 
   return (
     <nav
@@ -99,7 +106,7 @@ const {searchTerm, setSearchTerm} = useContext(SearchContext)
         </div>
 
         {/* Search Bar */}
-        <form
+        { !isHomePage && <form
          className="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0"
         >
           <span className="fs-5 me-2">🔍</span>
@@ -116,7 +123,7 @@ const {searchTerm, setSearchTerm} = useContext(SearchContext)
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-        </form>
+        </form>}
     </div>      
 
       </div>

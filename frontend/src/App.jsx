@@ -15,10 +15,10 @@ import CartContext from "./contexts/CartContext"
 import WishlistContext from "./contexts/WishlistContext"
 import AddressContext from "./contexts/AddressContext"
 import SearchContext from "./contexts/SearchContext"
+import {OrderProvider} from "./contexts/OrderContext"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import OrderSuccess from "./pages/OrderSuccess"
-
 
 export default function App(){
   const[cart, setCart] = useState(()=> {
@@ -30,7 +30,6 @@ export default function App(){
     const savedWishlist = localStorage.getItem("wishlist")
     return savedWishlist ? JSON.parse(savedWishlist) : []
   })
-
 
   const[addresses, setAddresses] = useState(()=> {
     const savedAddresses = localStorage.getItem("addresses")
@@ -67,6 +66,7 @@ export default function App(){
   <WishlistContext.Provider value={{wishlist, setWishlist }} >
   <CartContext.Provider value={{cart, setCart}}>
     <SearchContext.Provider value={{searchTerm, setSearchTerm}}>
+    <OrderProvider>
    <Router>
     <Nav />
     <Routes>
@@ -81,7 +81,7 @@ export default function App(){
     <Route path="/order-success" element={<OrderSuccess />} />
     </Routes>
    </Router>
-
+   </OrderProvider>
      <ToastContainer
       position="top-right"
       autoClose={3000}

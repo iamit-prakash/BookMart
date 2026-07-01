@@ -34,6 +34,7 @@ const handleIncrement = (bookId) => {
     } : product
   )
     setCart(increaseQuantity)
+    notifySuccess("Quantity increased")
 }
 
 const handleDecrement = (bookId) => {
@@ -45,6 +46,7 @@ const handleDecrement = (bookId) => {
     : product
   )
    setCart(decreseQuantity)
+   notifySuccess("Quantity decreased")
 }
 
 const totalPrice = cart.reduce((acc, curr) => acc + curr.price * curr.quantity, 0)

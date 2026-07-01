@@ -1,3 +1,4 @@
+import { notifySuccess, notifyError } from "../components/ToastMessage"
 import { useParams } from "react-router-dom"
 import useFetch from "../useFetch"
 import CartContext from "../contexts/CartContext"
@@ -23,7 +24,6 @@ const{wishlist, setWishlist} = useContext(WishlistContext)
 }
 
  const discountPercentage = Math.round(
-
     (
      (selectedBook.originalPrice - selectedBook.price) /
      selectedBook.originalPrice

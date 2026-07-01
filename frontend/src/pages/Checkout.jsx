@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { useContext } from "react"
 import CartContext from "../contexts/CartContext"
 import AddressContext from "../contexts/AddressContext"
+import OrderContext from "../contexts/OrderContext"
 
 export default function Checkout(){
   const navigate = useNavigate()
@@ -10,6 +11,8 @@ export default function Checkout(){
  const {cart, setCart} = useContext(CartContext)  
 
  const {addresses, selectedAddress} = useContext(AddressContext)
+
+ const {orders, setOrders} = useContext(OrderContext)
 
  // debug logs
  //console.log("Addresses:", addresses)
@@ -54,10 +57,23 @@ export default function Checkout(){
  }
 
  const handleConfirmOrder = () => {
-  setCart([])
+  const newOrder = {
+    id: Date.now(),
+    books: cart,
+    totalItems,
+    totalAmount: totalPrice,
+    deliveryCharge,
+    deliveryAddress,
+    orderDate: new Date().toLocaleString()
+  }
+  //console.log(newOrder)
+  setOrders([...orders, newOrder])
+  setCart([]);
+
   navigate("/order-success")
  }
 
+ 
     return(
         <div className="container py-4">
         <div className="row">
