@@ -80,7 +80,8 @@ const handleWishlist = () => {
             alt={selectedBook.title}
             className="img-fluid"
             style={{
-                height:"500px",
+                height:"400px",
+                width: "300px",
                 objectFit: "contain"
             }}
              />   
