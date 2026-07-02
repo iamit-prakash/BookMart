@@ -8,12 +8,8 @@ export default function Nav() {
 const {searchTerm, setSearchTerm} = useContext(SearchContext)
 //console.log(searchTerm)
 const  location = useLocation()
-const isHomePage = location.pathname === "/";
-
+const isBooksPage = location.pathname === "/books";
 //console.log(location)
-//console.log(isHomePage);
-
-
 
   return (
     <nav
@@ -106,23 +102,23 @@ const isHomePage = location.pathname === "/";
         </div>
 
         {/* Search Bar */}
-        { !isHomePage && <form
+        { isBooksPage && <  form
          className="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0"
         >
           <span className="fs-5 me-2">🔍</span>
 
-          <input
-            type="search"
-            placeholder="Search books..."
-            className="form-control"
-            style={{ 
-              width: "100%",
-              maxWidth: "320px"
-            }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
+      <input
+      type="search"
+      placeholder="Search books..."
+      className="form-control"
+      style={{
+      width: "100%",
+      maxWidth: "320px"
+      }}
+     value={searchTerm}
+     onChange={(e) => setSearchTerm(e.target.value)
+     }
+/>
         </form>}
     </div>      
 
